@@ -2,17 +2,28 @@ let choices = ["rock", "paper", "scissors"];
 let PLAYER_SCORE = 0;
 let COMPUTER_SCORE = 0;
 
+const liveResult = document.getElementById("result");
+liveResult.innerText = `Computer: ${COMPUTER_SCORE} VS Player: ${PLAYER_SCORE}`;
+const resultH1 = document.createElement('h1');
+
+
+
+
+
+const buttonRock = document.querySelector("#rock");
+buttonRock.addEventListener('click', playRound);
+
+const buttonPaper = document.querySelector("#paper");
+buttonPaper.addEventListener('click', playRound);
+
+const buttonScissors = document.querySelector("#scissors");
+buttonScissors.addEventListener('click', playRound);
+
+
 function getComputerChoice() {
   // Played against computer
   return choices[Math.floor(Math.random() * choices.length)];
 }
-
-function getPlayerChoice() {
-  // Get player choice
-  x = prompt("Make your choice! Rock, Paper or Scissors: ");
-  return x ? x.toLowerCase() : null;
-}
-
 function processChoices(computerSelection, playerSelection) {
   // player wins: 1, computer wins:2, tie:1, wrong input: -1
   if (computerSelection == playerSelection) {
@@ -40,57 +51,61 @@ function processChoices(computerSelection, playerSelection) {
         return 1;
       } else if ((computerSelection = "rock")) {
         return 2;
+
       }
-      break;
-    default:
-      return -1;
+
   }
 }
 
-function playRound(computerSelection, playerSelection) {
+
+function playRound(e) {
   // Plays just one round
-  result = processChoices(computerSelection, playerSelection);
+  let computerSelection = getComputerChoice();
+
+  result = processChoices(computerSelection, e.target.id);
 
   switch (result) {
     case 0:
-      console.log(`Computer chose ${computerSelection}. Tie.`);
+      resultH1.innerText = `Computer chose ${computerSelection}. Tie.`;
 
       break;
     case 1:
-      console.log(`Computer chose ${computerSelection}. You win.`);
+      resultH1.innerText = `Computer chose ${computerSelection}. You win.`;
       PLAYER_SCORE++;
       break;
     case 2:
-      console.log(`Computer chose ${computerSelection}. Computer wins.`);
+      resultH1.innerText = `Computer chose ${computerSelection}. Computer wins.`;
       COMPUTER_SCORE++;
       break;
     case -1:
-      console.log("That is not an option...");
+      resultH1.innerText = "That is not an option...";
       break;
   }
+
+  liveResult.innerText = `Computer: ${COMPUTER_SCORE} VS Player: ${PLAYER_SCORE}`;
+  liveResult.appendChild(resultH1);
+
+  if (COMPUTER_SCORE >= 5  || PLAYER_SCORE >= 5)
+  {
+    printResult();
+  }
+
 }
 
 function printResult() {
   // Prints result
-  console.log(`Computer: ${COMPUTER_SCORE} VS Player: ${PLAYER_SCORE}`);
-  console.log(
-    PLAYER_SCORE > COMPUTER_SCORE
-      ? "Player wins the game."
-      : PLAYER_SCORE == COMPUTER_SCORE
+
+
+  resultH1.innerText = PLAYER_SCORE > COMPUTER_SCORE
+    ? "Player wins the game."
+    : PLAYER_SCORE == COMPUTER_SCORE
       ? "Match ends in a tie"
       : "Computer wins the game."
-  );
+
+      buttonRock.removeEventListener('click', playRound);
+      
+      buttonPaper.removeEventListener('click', playRound);
+      
+      buttonScissors.removeEventListener('click', playRound);
+
 }
-
-function playGame(numOfRounds) {
-  // Loops playRound numOfRound times.
-  for (let i = 0; i < numOfRounds; i++) {
-    computerSelection = getComputerChoice();
-    playerSelection = getPlayerChoice();
-    playRound(computerSelection, playerSelection);
-  }
-
-  printResult();
-}
-
-playGame(5);
